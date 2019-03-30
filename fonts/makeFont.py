@@ -35,17 +35,17 @@ import functools
 import typing
 import ctypes
 
-CharMatrix = typing.List[ctypes.c_int8]
-
 
 class CharBitmap:
     """
-        Символ представлен матрицей бит - построчно int8[8] табло принимает столбцы,
-        класс отвечает за конвертацию, реально ширина 6 бит
+        Символ представлен матрицей бит - построчно int8[8] 
+        табло принимает столбцы,
+        класс отвечает за конвертацию, реально ширина 6 бит/пикселей
     """
     WIDTH = 6
     HEIGHT = 8
-
+    CharMatrix = typing.List[ctypes.c_uint8]
+    
     def __init__(self, code: int, rows: CharMatrix):
         """
         :param code:  код символа ascii
@@ -58,9 +58,9 @@ class CharBitmap:
         self._cols = [action(num) for num in range(CharBitmap.HEIGHT)]
 
     @staticmethod
-    def makeColumn(rows, num):
+    def makeColumn(rows: CharMatrix, index: int) -> CharMatrix:
         """вспомогательный метод преобразования строк матрицы в столбцы"""
-        MASK = 0x80 >> num
+        MASK = 0x80 >> index
         COL_MASK = 0x80  # COL_MASK = 0x1
         rslt = 0
         for row in rows:
@@ -84,22 +84,28 @@ class CharBitmap:
             yield col
 
 
-class Alphabet:
+class SymbolRender:
     """Класс - алфавит хранит матричные символы. Может генерировать строки в заданном шрифте"""
     def __init__(self):
         self._symbols = {}
 
-    def addSymbol(self, code, rows):
+    def addSymbol(self, code:int, rows:CharBitmap.CharMatrix):
+        """
+        регистрирует символ в таблице
+        """
         self._symbols[chr(code)] = CharBitmap(code, rows)
 
-    def makeString(self, value):
+    def makeString(self, value: str):
+        """
+            рендеринг строки по заднному шрифту
+        """
         return [self._symbols[char] for char in value]
 
 
 if __name__ == '__main__':
 
     FILE_NAME = 'font.hex'
-    alphabet = Alphabet()
+    alphabet = SymbolRender()
     processHexFont(FILE_NAME, alphabet.addSymbol)
     test_data = ['Привет', 'Hello', 'World!', 'Раз два три', '1, 2, 3! GOOO! ']
 
