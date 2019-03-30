@@ -10,14 +10,14 @@ class Table(Qt.QAbstractTableModel):
 
     DISPLAY_WIDTH = 40
     DISPLAY_HEIGHT = 8
-    
+
     def rowCount(self, index =  Qt.QModelIndex()):
         return self.DISPLAY_HEIGHT
     
     def columnCount(self, index = Qt.QModelIndex()):
         return self.DISPLAY_WIDTH
     
-    ON = Qt.QColor(255, 0, 0)
+    ON  = Qt.QColor(255, 0, 0)
     OFF = Qt.QColor(0, 0, 0)
 
     def data(self, index: Qt.QModelIndex, role: int):
