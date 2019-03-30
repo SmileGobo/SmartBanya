@@ -1,21 +1,23 @@
 import sys  # sys нужен для передачи argv в QApplication
 from PyQt5 import QtWidgets, Qt, QtCore
-import display  # Это наш конвертированный файл дизайна
+import ui.display  # Это наш конвертированный файл дизайна
 
 class Table(Qt.QAbstractTableModel):
     def __init__(self):
         super().__init__()
         self._data = []
         pass
+
     DISPLAY_WIDTH = 40
     DISPLAY_HEIGHT = 8
+
     def rowCount(self, index =  Qt.QModelIndex()):
         return self.DISPLAY_HEIGHT
     
     def columnCount(self, index = Qt.QModelIndex()):
         return self.DISPLAY_WIDTH
     
-    ON = Qt.QColor(255, 0, 0)
+    ON  = Qt.QColor(255, 0, 0)
     OFF = Qt.QColor(0, 0, 0)
 
     def data(self, index: Qt.QModelIndex, role: int):
@@ -35,7 +37,7 @@ class Table(Qt.QAbstractTableModel):
     def addColumn(self, val: int):
         self._data.append(val)
         
-class TestApp(QtWidgets.QMainWindow, display.Ui_MainWindow):
+class TestApp(QtWidgets.QMainWindow, ui.display.Ui_MainWindow):
     def __init__(self):
         # Это здесь нужно для доступа к переменным, методам
         # и т.д. в файле design.py
