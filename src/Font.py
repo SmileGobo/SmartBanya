@@ -1,6 +1,5 @@
 #!/usr/bin/python3 
 
-
 def asciiRow(num, fill='*', space='_'):
     WIDTH = 8
     MASK = 1 << WIDTH
@@ -97,26 +96,24 @@ class SymbolRender:
 
     def makeString(self, value: str):
         """
-            рендеринг строки по заднному шрифту
+            рендеринг строки по заданному шрифту
         """
         return [self._symbols[char] for char in value]
 
 
 if __name__ == '__main__':
 
-    FILE_NAME = 'font.hex'
+    FILE_NAME = './fonts/font.hex'
     alphabet = SymbolRender()
     processHexFont(FILE_NAME, alphabet.addSymbol)
-    test_data = ['Привет', 'Hello', 'World!', 'Раз два три', '1, 2, 3! GOOO! ']
+    #test_data = ['Привет', 'Hello', 'World!', 'Раз два три', '1, 2, 3! GOOO! ']
 
-'''
     a_char = [0x0, 0x0, 0x70, 0x88, 0xF8, 0x88, 0x88, 0x88]
 
     renderChar(ord('a'), a_char)
-    action = functools.partial(makeColumn, a_char)
+    action = functools.partial(CharBitmap.makeColumn, a_char)
     a_rotate = [action(num) for num in range(len(a_char))]
     renderChar(ord('a'), a_rotate)
     a_rotate = list(map(lambda val: '{0:08b}'.format(val), a_rotate))
     print(a_rotate)
-'''
 
