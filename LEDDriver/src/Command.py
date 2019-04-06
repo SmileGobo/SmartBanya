@@ -1,14 +1,17 @@
+import enum
+
 class Base:
 
+    class Type(enum.IntEnum):
+        ShowFrame  = 0x1
+        ShowColumn = 0x2
+        LoadColumn = 0x3
+        LoadFrame  = 0x4
+        SetBrghtnss= 0x5
+    
     Code = 0
     Length = 0
     Marker = 0x55
-    ShowFrame  = 0x1
-    ShowColumn = 0x2
-    LoadColumn = 0x3
-    LoadFrame  = 0x4
-    SetBrghtnss= 0x5
-
 
     def __init__(self, addr = 0, data = []):
         if addr > 0x70:
@@ -36,10 +39,10 @@ def defineCommand(code, len = 0):
         Length = len
     return Impl
 
-class LoadFrame(defineCommand(Base.LoadFrame, len = 35)):
+class LoadFrame(defineCommand(Base.Type.LoadFrame, len = 35)):
     pass
 
-class LoadColumn(defineCommand(Base.LoadColumn, len = 4)):
+class LoadColumn(defineCommand(Base.Type.LoadColumn, len = 4)):
     pass
 
 '''    
@@ -53,5 +56,5 @@ class ShowColumn(Base):
 
 '''
 
-ShowFrame = defineCommand(Base.ShowFrame)
-ShowColumn = defineCommand(Base.ShowColumn)
+ShowFrame = defineCommand(Base.Type.ShowFrame)
+ShowColumn = defineCommand(Base.Type.ShowColumn)
