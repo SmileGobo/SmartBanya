@@ -1,6 +1,4 @@
-
 class Base:
-
 
     Code = 0
     Length = 0
