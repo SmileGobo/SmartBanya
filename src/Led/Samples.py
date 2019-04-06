@@ -10,14 +10,14 @@ def LoadFrame(addr, data):
     return [
         Command.Base.Marker,
         Command.secondByte(Command.Base.LoadFrame, addr),
-        Command.LoadFrame.Length
+        Command.LoadFrame.Size
     ] + data
 
 def LoadColumn(addr, col, val):
     return [
         Command.Base.Marker, 
         Command.secondByte(Command.Base.LoadColumn, addr),
-        Command.LoadColumn.Length,
+        Command.LoadColumn.Size,
         val
     ]
 

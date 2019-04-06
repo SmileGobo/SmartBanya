@@ -1,4 +1,6 @@
 import enum
+from typing import List
+
 
 class Base:
 
@@ -9,11 +11,15 @@ class Base:
         LoadFrame  = 0x4
         SetBrghtnss= 0x5
     
-    Code = 0
-    Length = 0
-    Marker = 0x55
+    Code:       int = 0
+    Length:     int = 0
+    Marker:     int = 0x55
+    Broadcast:  bool = False
 
-    def __init__(self, addr = 0, data = []):
+    def __init__(self, addr: int = 0, data:List[int] = []):
+        """
+            Создание команды, адрес может отсуствовать(команды: показ кадра и показ столбца)
+        """
         if addr > 0x70:
             raise RuntimeError('addr not in range 0 <= addr <= 0x70')
         
@@ -23,7 +29,8 @@ class Base:
 
     def pack(self):
         rslt = [self.Marker, secondByte( self.Code, self._addr)] #TODO адрес 5 бит 3 код
-        if 0 != self.Length and 0 != self._addr:
+        #длинна не добалвятся к широковещательным коммандам
+        if self.Broadcast:
             rslt.append(self.Length)
             rslt += self._data
         return bytes(rslt)
@@ -33,16 +40,17 @@ def secondByte(code, addr):
         return code
     return code |(addr << 3)   
 
-def defineCommand(code, len = 0):
+def defineCommand(code, size = 0, broadcast: bool = False):
     class Impl(Base):
         Code = code
-        Length = len
+        Size = size
+        BroadCast = broadcast
     return Impl
 
-class LoadFrame(defineCommand(Base.Type.LoadFrame, len = 35)):
+class LoadFrame(defineCommand(Base.Type.LoadFrame, size = 35)):
     pass
 
-class LoadColumn(defineCommand(Base.Type.LoadColumn, len = 4)):
+class LoadColumn(defineCommand(Base.Type.LoadColumn, size = 4)):
     pass
 
 '''    
@@ -56,5 +64,5 @@ class ShowColumn(Base):
 
 '''
 
-ShowFrame = defineCommand(Base.Type.ShowFrame)
-ShowColumn = defineCommand(Base.Type.ShowColumn)
+ShowFrame = defineCommand(Base.Type.ShowFrame, 2, True)
+ShowColumn = defineCommand(Base.Type.ShowColumn, 2, True)
