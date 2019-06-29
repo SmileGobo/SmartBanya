@@ -1,5 +1,7 @@
 #!/usr/bin/python3 
-
+"""
+Модуль для работы со шрифтами
+"""
 def asciiRow(num, fill='*', space='_'):
     WIDTH = 8
     MASK = 1 << WIDTH
@@ -16,6 +18,9 @@ def asciiRow(num, fill='*', space='_'):
 
 
 def renderChar(code, rows):
+    """
+    распечатка символа на консоль
+    """
     print('"{}": {} (0x{:X})'.format(chr(code), code, code))
     for r in rows:
         # print('{}\t{:08b}\t{}'.format(r, r, asciiRow(r)))
@@ -24,6 +29,10 @@ def renderChar(code, rows):
 
 
 def processHexFont(fname, char_clbck):
+    """
+    Загружает шрифт из указнного файла
+    шрифты хранятся построчно
+    """
     import scanf
     with open(fname, 'r') as file:
         for hex_str in file.readlines():
@@ -58,7 +67,12 @@ class CharBitmap:
 
     @staticmethod
     def makeColumn(rows: CharMatrix, index: int) -> CharMatrix:
-        """вспомогательный метод преобразования строк матрицы в столбцы"""
+        """
+        вспомогательный метод преобразования строк матрицы в столбцы
+        Преобразует указанную строку в столбец
+        :rows - матрица символ (построчное представление)
+        :index - номер строки
+        """
         MASK = 0x80 >> index
         COL_MASK = 0x80  # COL_MASK = 0x1
         rslt = 0
@@ -70,10 +84,12 @@ class CharBitmap:
 
         return rslt
 
-    def getColumns(self):
-        """Генератор. Выдает столбцы матрицы.
+    def nextColumn(self):
+        """
+        Генератор. Выдает столбцы матрицы.
         Не выдает более одного пустого столбца, подряд.
-        Это нужно для 'коротких' символов"""
+        Это нужно для 'коротких' символов
+        """
         space_flag = False
         count = 0
         for col in self._cols:
@@ -84,7 +100,10 @@ class CharBitmap:
 
 
 class SymbolRender:
-    """Класс - алфавит хранит матричные символы. Может генерировать строки в заданном шрифте"""
+    """
+    Класс - алфавит(твблица символов) хранит матричные символы. 
+    Рендерит строки по предустановленному набору символов
+    """
     def __init__(self):
         self._symbols = {}
 
