@@ -26,10 +26,12 @@ class Table(Qt.QAbstractTableModel):
 
         elif role == QtCore.Qt.SizeHintRole:
             return Qt.QSize(0, 0)
+        #основной рендер по данным
         elif role == QtCore.Qt.BackgroundRole:
             num = index.column()
             if num < len(self._data):
                 val = self._data[num]
+                #вычисляем маску относительно текущей
                 MASK = 1 << index.row()
                 return self.ON if MASK & val else self.OFF
             return self.OFF
@@ -38,6 +40,7 @@ class Table(Qt.QAbstractTableModel):
         self._data.append(val)
         
 class TestApp(QtWidgets.QMainWindow, ui.display.Ui_MainWindow):
+    DefaultCellSize = 14
     def __init__(self):
         # Это здесь нужно для доступа к переменным, методам
         # и т.д. в файле design.py
@@ -45,21 +48,22 @@ class TestApp(QtWidgets.QMainWindow, ui.display.Ui_MainWindow):
         self.setupUi(self)  # Это нужно дл инициализации нашего дизайна
         self._table = Table()
 
-        cols = (1, 2, 4, 8)
-        for col in cols:
+        #тестовые данные?
+        for col in (1, 2, 4, 8):
             self._table.addColumn(col)
-
-        def setSize(count, action):
-            SIZE = 25
-            for index in range(0, count):
-                action(index, SIZE)
-        
         self._display.setModel(self._table)
-        setSize(self._table.columnCount(), self._display.setColumnWidth)
-        setSize(self._table.rowCount(), self._display.setRowHeight)
+        self.setCellSize(self.DefaultCellSize)
 
     def run(self):
         pass
+
+    def setCellSize(self, value: int):
+        def setSize(count, action):
+            for index in range(0, count):
+                action(index, value)
+        
+        setSize(self._table.columnCount(), self._display.setColumnWidth)
+        setSize(self._table.rowCount(), self._display.setRowHeight)
     
 def main():
     app = QtWidgets.QApplication(sys.argv)  # Новый экземпляр QApplication
