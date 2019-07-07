@@ -35,9 +35,19 @@ class Table(Qt.QAbstractTableModel):
                 MASK = 1 << index.row()
                 return self.ON if MASK & val else self.OFF
             return self.OFF
+    
+    #def setData(self, index: Qt.QModelIndex, val: Qt.QVariant, role: int) -> bool:
+    #    row = index.row()
+    #    col - index.col()
+    #    return True
 
     def addColumn(self, val: int):
         self._data.append(val)
+        col = len(self._data) - 1
+        left = self.createIndex(0, col)
+        right = self.createIndex(7, col)
+        self.dataChanged.emit(left, right)
+    
         
 class TestApp(QtWidgets.QMainWindow, ui.display.Ui_MainWindow):
     DefaultCellSize = 14
@@ -48,14 +58,15 @@ class TestApp(QtWidgets.QMainWindow, ui.display.Ui_MainWindow):
         self.setupUi(self)  # Это нужно дл инициализации нашего дизайна
         self._table = Table()
 
+       
+        self._display.setModel(self._table)
+        self.setCellSize(self.DefaultCellSize)
+        self._run.clicked.connect(self._runHandler)
+
+    def _runHandler(self):
         #тестовые данные?
         for col in (1, 2, 4, 8):
             self._table.addColumn(col)
-        self._display.setModel(self._table)
-        self.setCellSize(self.DefaultCellSize)
-
-    def run(self):
-        pass
 
     def setCellSize(self, value: int):
         def setSize(count, action):
