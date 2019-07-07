@@ -1,7 +1,7 @@
 import sys  # sys нужен для передачи argv в QApplication
 from PyQt5 import QtWidgets, Qt, QtCore
 import ui.display  # Это наш конвертированный файл дизайна
-
+import Font
 class Table(Qt.QAbstractTableModel):
     def __init__(self):
         super().__init__()
@@ -42,12 +42,25 @@ class Table(Qt.QAbstractTableModel):
     #    return True
 
     def addColumn(self, val: int):
+        #WARNING переполнение данных
         self._data.append(val)
-        col = len(self._data) - 1
+        return len(self._data) - 1
+
+    def showColumn(self, col):
         left = self.createIndex(0, col)
         right = self.createIndex(7, col)
         self.dataChanged.emit(left, right)
+
+    def nextFrame(self):
+        """
+        Объявляем сдледующйи кадр
+        """
+        self._data.clear()
     
+    def showFrame(self):
+        left = self.createIndex(0, 0)
+        right = self.createIndex(self.DISPLAY_HEIGHT - 1, self.DISPLAY_WIDTH - 1)
+        self.dataChanged.emit(left, right)
         
 class TestApp(QtWidgets.QMainWindow, ui.display.Ui_MainWindow):
     DefaultCellSize = 14
@@ -58,15 +71,22 @@ class TestApp(QtWidgets.QMainWindow, ui.display.Ui_MainWindow):
         self.setupUi(self)  # Это нужно дл инициализации нашего дизайна
         self._table = Table()
 
-       
         self._display.setModel(self._table)
         self.setCellSize(self.DefaultCellSize)
         self._run.clicked.connect(self._runHandler)
+        self._font = Font.SymbolRenderer()
+        #TODO загрузка из filepicker
+        self._font.loadFromFile('./fonts/font.hex')
+        
 
     def _runHandler(self):
         #тестовые данные?
-        for col in (1, 2, 4, 8):
-            self._table.addColumn(col)
+        msg = self._text.text()
+        self._table.nextFrame()
+        for char in self._font.makeString(msg):
+            for col in char.nextColumn():
+                self._table.addColumn(col)
+        self._table.showFrame()
 
     def setCellSize(self, value: int):
         def setSize(count, action):

@@ -120,6 +120,8 @@ class SymbolRenderer:
         """
         return [self._symbols[char] for char in value]
 
+    def loadFromFile(self, fname):
+        processHexFont(fname, self.addSymbol)
 
 if __name__ == '__main__':
 
