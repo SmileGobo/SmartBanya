@@ -52,6 +52,7 @@ class CharBitmap:
     """
     WIDTH = 6
     HEIGHT = 8
+    MIN_WIDTH = 4
     CharMatrix = typing.List[ctypes.c_uint8]
     
     def __init__(self, code: int, rows: CharMatrix):
@@ -94,14 +95,14 @@ class CharBitmap:
         count = 0
         for col in self._cols:
             count += 1
-            if count >= 4 and col == 0:
+            if count >= self.MIN_WIDTH and col == 0:
                 space_flag  = True
             yield col
 
 
-class SymbolRender:
+class SymbolRenderer:
     """
-    Класс - алфавит(твблица символов) хранит матричные символы. 
+    Класс - алфавит(таблица символов) хранит матричные символы. 
     Рендерит строки по предустановленному набору символов
     """
     def __init__(self):
@@ -123,7 +124,7 @@ class SymbolRender:
 if __name__ == '__main__':
 
     FILE_NAME = './fonts/font.hex'
-    alphabet = SymbolRender()
+    alphabet = SymbolRenderer()
     processHexFont(FILE_NAME, alphabet.addSymbol)
     #test_data = ['Привет', 'Hello', 'World!', 'Раз два три', '1, 2, 3! GOOO! ']
 
